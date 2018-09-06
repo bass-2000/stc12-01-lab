@@ -1,6 +1,8 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -69,6 +71,11 @@ public class ReaderWriter {
     }
 
     public String readFrom(String fileName) {
+        if (fileName.contains("http") || fileName.contains("ftp://")) return readFromURL(fileName);
+        else return readFromLocalFile(fileName);
+    }
+
+    public String readFromLocalFile(String fileName) {
         String readFromFile = "";
         if (!isEmpty(fileName, "файл")) {
             {
@@ -86,6 +93,25 @@ public class ReaderWriter {
             }
         }
         return readFromFile;
+    }
+
+    public String readFromURL(String url) {
+        String result = "";
+        try {
+            URLConnection uc = new URL(url).openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+            String inputLine;
+            StringBuilder sb = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                sb.append(inputLine);
+            }
+            in.close();
+            result = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("parsing url " + url + " : " + result);
+        return result;
     }
 
     public String[] writeToSentences(String input) {

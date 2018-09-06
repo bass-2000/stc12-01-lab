@@ -8,8 +8,8 @@ public class Main {
 
     public static void main(String[] args) throws EmptySourceException, IOException, InterruptedException {
         String resultFile = "result";
-        String[] sourcesArray = {"resources"};
-        String[] words = {"libero", "версия"};
+        String[] sourcesArray = {"http://www.taobao.com"};
+        String[] words = {"requested", "версия"};
 
 
         ReaderWriter readerWriter = new ReaderWriter();
