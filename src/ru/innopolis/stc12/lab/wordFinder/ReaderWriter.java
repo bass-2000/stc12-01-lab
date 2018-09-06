@@ -1,12 +1,14 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class ReaderWriter {
     final String REGEX_WORDS = "[,;:.!?'_\\-\"\\s]+";
-    final String REGEX_SENTENCES = "(\r\n)|(\n)|([.!?]+\\s*)";
+    final String REGEX_SENTENCES = "^\\s+[A-Za-z,;'\"\\s]+[.?!]$";
 
     public ReaderWriter() {
     }
@@ -69,15 +71,18 @@ public class ReaderWriter {
     public String readFrom(String fileName) {
         String readFromFile = "";
         if (!isEmpty(fileName, "файл")) {
-            try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-                StringBuffer sb = new StringBuffer();
-                int c;
-                while ((c = br.read()) != -1) { // чтение посимвольно
-                    sb.append((char) c);
+            {
+                byte[] encoded = new byte[0];
+                try {
+                    encoded = Files.readAllBytes(Paths.get(fileName));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                readFromFile = sb.toString();
-            } catch (IOException ex) {
-                System.out.println(ex);
+                try {
+                    readFromFile = new String(encoded, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return readFromFile;

@@ -8,8 +8,8 @@ public class Main {
 
     public static void main(String[] args) throws EmptySourceException, IOException, InterruptedException {
         String resultFile = "result";
-        String[] sourcesArray = {"C://TEMP//SuccessFactors.log"};
-        String[] words = {"системы", "ввв"};
+        String[] sourcesArray = {"resources"};
+        String[] words = {"libero", "версия"};
 
 
         ReaderWriter readerWriter = new ReaderWriter();
