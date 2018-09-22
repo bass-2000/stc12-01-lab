@@ -1,5 +1,7 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.Scanner;
 
 
 public class Main {
-
+    final static Logger logger = Logger.getLogger(Main.class);
 
     public static void main(String[] args) throws EmptySourceException, IOException, InterruptedException {
         Scanner scanner = new Scanner(System.in);
@@ -24,9 +26,9 @@ public class Main {
         try {
             dataParser.getOccurrences(sourcesArray, words, resultFile);
         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         }
 
     }

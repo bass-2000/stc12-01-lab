@@ -1,6 +1,8 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
 
+import org.apache.log4j.Logger;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 public class DataParser implements DataParserInterface {
     ArrayList<SingleResourceParser> threads = new ArrayList<>();
     private ReaderWriter readerWriter;
+    final static Logger logger = Logger.getLogger(DataParser.class);
 
     public DataParser(ReaderWriter readerWriter) {
         this.readerWriter = readerWriter;
@@ -39,13 +42,13 @@ public class DataParser implements DataParserInterface {
                 bw.write("");
                 bw.flush();
             } catch (IOException e) {
-                System.out.println(e);
+                logger.error(e);
             }
         } else {
             try {
                 checkFile.createNewFile();
             } catch (IOException e) {
-                System.out.println(e);
+                logger.error(e);
             }
         }
     }

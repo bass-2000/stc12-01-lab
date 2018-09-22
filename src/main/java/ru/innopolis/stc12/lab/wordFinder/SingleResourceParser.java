@@ -1,6 +1,9 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
+import org.apache.log4j.Logger;
+
 public class SingleResourceParser extends Thread {
+    final static Logger logger = Logger.getLogger(SingleResourceParser.class);
     String name;
     String fileSource;
     boolean isBigFile;
@@ -26,23 +29,23 @@ public class SingleResourceParser extends Thread {
                 try {
                     counter.wait();
                 } catch (InterruptedException e) {
-                    System.out.println(e);
+                    logger.error(e);
                 }
             }
         }
         counter.incCount();
-        System.out.println(name + " создан новый поток");
+        logger.info(name + " создан новый поток");
         String[] result;
         if (!isBigFile) {
             String fromFile = readerWriter.readFrom(fileSource);
             String[] temp = readerWriter.writeToSentences(fromFile);
             result = readerWriter.wordSearch(temp, words);
         } else {
-            System.out.println("Внимание! Идет обработка файла большого размера. Это может занять несколько (от 3 до 7) минут");
+            logger.info("Внимание! Идет обработка файла большого размера. Это может занять несколько (от 3 до 7) минут");
             result = readerWriter.readFromBigFile(fileSource, words);
         }
         readerWriter.writeToResult(result, fileResult);
-        System.out.println(name + " поток завершен");
+        logger.info(name + " поток завершен");
         counter.decCount();
         synchronized (counter) {
             counter.notifyAll();

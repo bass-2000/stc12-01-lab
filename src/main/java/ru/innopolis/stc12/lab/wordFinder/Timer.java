@@ -1,7 +1,10 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
+import org.apache.log4j.Logger;
+
 public class Timer {
     long startTime;
+    final static Logger logger = Logger.getLogger(Timer.class);
 
     public Timer(long startTime) {
         this.startTime = startTime;
@@ -20,7 +23,7 @@ public class Timer {
             overageTime = overageTime - 1000L;
             overageTimeInSeconds++;
         }
-
-        System.out.printf("Время выполнения поиска: %d минут %d секунд\n", overageTimeInMinutes, overageTimeInSeconds);
+        logger.info("Время выполнения поиска: " + (finishTime - startTime));
+        logger.info("Время выполнения поиска: " + overageTimeInMinutes + " минут " + overageTimeInSeconds + "  секунд\n");
     }
 }

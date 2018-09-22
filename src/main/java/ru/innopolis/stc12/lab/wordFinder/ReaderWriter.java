@@ -1,5 +1,7 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -11,6 +13,7 @@ import java.util.regex.Pattern;
 public class ReaderWriter {
     final String REGEX_WORDS = "[,;:.!?'_\\-\"\\s]+";
     final String REGEX_SENTENCES = "^\\s+[A-Za-z,;'\"\\s]+[.?!]$";
+    final static Logger logger = Logger.getLogger(ReaderWriter.class);
 
     public ReaderWriter() {
     }
@@ -19,6 +22,7 @@ public class ReaderWriter {
         boolean isEmpty = false;
         for (int i = 0; i < objects.length; i++) {
             if (objects[i] == null) {
+                logger.error("Пустой элемент " + descriptions[i]);
                 isEmpty = true;
             }
         }
@@ -64,7 +68,7 @@ public class ReaderWriter {
                 }
                 readySentences = tempReadySentences.toArray(new String[tempReadySentences.size()]);
             } catch (IOException ex) {
-                System.out.println(ex);
+                logger.error(ex.getMessage());
             }
         }
         return readySentences;
@@ -83,12 +87,12 @@ public class ReaderWriter {
                 try {
                     encoded = Files.readAllBytes(Paths.get(fileName));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 }
                 try {
                     readFromFile = new String(encoded, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage());
                 }
             }
         }
@@ -108,9 +112,9 @@ public class ReaderWriter {
             in.close();
             result = sb.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
-        System.out.println("parsing url " + url + " : " + result);
+        logger.info("parsing url " + url + " : " + result);
         return result;
     }
 
@@ -119,7 +123,7 @@ public class ReaderWriter {
         if (isEmpty(input, "текст")) {
             sentences = new String[0];
         } else {
-            Pattern pattern = Pattern.compile(REGEX_SENTENCES);
+            Pattern pattern = Pattern.compile(REGEX_SENTENCES); //лучше вынести наверх.
             sentences = pattern.split(input);
         }
         return sentences;
@@ -148,7 +152,7 @@ public class ReaderWriter {
                 }
                 bw.flush();
             } catch (IOException e) {
-                System.out.println(e);
+                logger.error(e.getMessage());
             }
         }
     }

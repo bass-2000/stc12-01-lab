@@ -1,8 +1,12 @@
 package ru.innopolis.stc12.lab.wordFinder;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 
 public class Counter extends Thread {
+    final static Logger currentClassLogger = Logger.getLogger(Counter.class);
+    final static Logger loggerSRP = Logger.getLogger(SingleResourceParser.class);
     ArrayList<SingleResourceParser> threads = new ArrayList<>();
     Timer timer;
     private int count;
@@ -12,7 +16,7 @@ public class Counter extends Thread {
         this.threads = threads;
         count = 0;
         timer = new Timer(System.currentTimeMillis());
-        System.out.println("Создан поток-счетчик Counter");
+        currentClassLogger.info("Создан поток-счетчик Counter");
     }
 
     public synchronized int getCount() {
@@ -21,12 +25,12 @@ public class Counter extends Thread {
 
     public synchronized void incCount() {
         count++;
-        System.out.println(count + " потоков выполняется");
+        loggerSRP.info(count + " потоков выполняется");
     }
 
     public synchronized void decCount() {
         if (count > 0) count--;
-        System.out.println(count + " потоков выполняется");
+        loggerSRP.info(count + " потоков выполняется");
     }
 
     @Override
@@ -35,10 +39,10 @@ public class Counter extends Thread {
             try {
                 threads.get(i).join();
             } catch (InterruptedException e) {
-                System.out.println(e);
+                currentClassLogger.error(e);
             }
         }
         timer.calculateTime();
-        System.out.println("Counter завершен");
+        currentClassLogger.info("Counter завершен");
     }
 }
