@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class ReaderWriter {
     final String REGEX_WORDS = "[,;:.!?'_\\-\"\\s]+";
-    final String REGEX_SENTENCES = "^\\s+[A-Za-z,;'\"\\s]+[.?!]$";
+    final String REGEX_SENTENCES = "(?<=[.!?])\\s*";
     final static Logger logger = Logger.getLogger(ReaderWriter.class);
 
     public ReaderWriter() {
