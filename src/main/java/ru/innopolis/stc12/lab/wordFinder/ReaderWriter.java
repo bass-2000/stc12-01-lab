@@ -8,6 +8,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class ReaderWriter {
@@ -35,7 +36,6 @@ public class ReaderWriter {
 
     public String[] readFromBigFile(String fileName, String[] searchWords) {
         String[] readFromFileSentences;
-        String[] tempReady;
         String[] readySentences = new String[0];
         if (!isEmpty(fileName, "файл")) {
             try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -54,18 +54,13 @@ public class ReaderWriter {
                         }
                     } else {
                         readFromFileSentences = tempArray.toArray(new String[tempArray.size()]);
-                        tempReady = wordSearch(readFromFileSentences, searchWords);
-                        for (String s : tempReady) {
-                            tempReadySentences.add(s);
-                        }
+                        tempReadySentences.addAll(Arrays.asList(wordSearch(readFromFileSentences, searchWords)));
                         tempArray = new ArrayList<>();
                     }
                 }
                 readFromFileSentences = tempArray.toArray(new String[tempArray.size()]);
-                tempReady = wordSearch(readFromFileSentences, searchWords);
-                for (String s : tempReady) {
-                    tempReadySentences.add(s);
-                }
+                tempReadySentences.addAll(Arrays.asList(wordSearch(readFromFileSentences, searchWords)));
+
                 readySentences = tempReadySentences.toArray(new String[tempReadySentences.size()]);
             } catch (IOException ex) {
                 logger.error(ex.getMessage());

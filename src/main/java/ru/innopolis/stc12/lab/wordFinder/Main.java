@@ -18,9 +18,8 @@ public class Main {
         scanner.nextLine();
 
         String resultFile = "result";
-        String[] sourcesArray = getFIleNames("D://temp//testSet//");
-        String[] words = {"starter", "smarter"};
-
+        String[] sourcesArray = getFIleNames("C://temp//GENMEGENTLY//");
+        String[] words = {"boyko", "smarter"};
 
         ReaderWriter readerWriter = new ReaderWriter();
         DataParser dataParser = new DataParser(readerWriter);
