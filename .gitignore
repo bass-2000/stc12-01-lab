@@ -6,4 +6,5 @@ out
 build
 *.dat
 *.bin
+.gradle
 
