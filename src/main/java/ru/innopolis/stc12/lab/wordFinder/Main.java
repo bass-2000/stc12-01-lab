@@ -13,6 +13,7 @@ public class Main {
     final static Logger logger = Logger.getLogger(Main.class);
 
     public static void main(String[] args) throws EmptySourceException, IOException, InterruptedException {
+        System.out.println("paused. press enter");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
 
