@@ -54,14 +54,16 @@ class ReaderWriterTest {
         String result = readerWriter.readFromURL("http://generator.lorem-ipsum.info/");
         String expected = "Most of its text is made up from sections";
         assertTrue(result.contains(expected));
-        logger.info("Expected string was found" + expected);
+        logger.info("Expected string was found " + expected);
     }
 
     @Test
     void readFromBigFile() {
         String[] words = {"ipsum", "donec"};
         String[] strings = readerWriter.readFromBigFile("resources", words);
-        assertEquals("Lorem ipsum dolor sit amet, consectetur adipiscing elit", strings[0]);
+        String expected = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
+        assertEquals(expected, strings[0]);
+        logger.info("Expected string was found " + expected);
     }
 
     @Test
@@ -77,7 +79,9 @@ class ReaderWriterTest {
     void writeToSentences() {
         String input = "London is the Capital of Great Britan.\n Nothing to do here.";
         String[] result = readerWriter.writeToSentences(input);
-        assertEquals("London is the Capital of Great Britan.", result[0]);
+        String expected = "London is the Capital of Great Britan.";
+        assertEquals(expected, result[0]);
+        logger.info("Expected string was found: " + result[0]);
     }
 
     @AfterEach

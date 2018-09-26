@@ -33,8 +33,15 @@ dependencies {
             'org.junit.vintage:junit-vintage-engine:5.1.0'
     )
 }
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
 
 test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+    testLogging.showStandardStreams = true
+
     useJUnitPlatform()
     afterSuite { desc, result ->
         if (!desc.parent)

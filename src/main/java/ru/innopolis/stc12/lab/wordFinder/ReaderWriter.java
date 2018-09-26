@@ -109,7 +109,7 @@ public class ReaderWriter {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-        logger.info("parsing url " + url + " : " + result);
+        logger.info("parsing url " + url);
         return result;
     }
 
