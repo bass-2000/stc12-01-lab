@@ -84,6 +84,18 @@ class ReaderWriterTest {
         logger.info("Expected string was found: " + result[0]);
     }
 
+    @Test
+    void splitIntoWords() {
+        String input = "London is the Capital of Great Britan.";
+        String[] result = readerWriter.splitIntoWords(input);
+        String[] expected = {"London", "is", "the", "Capital", "of", "Great", "Britan"};
+        for (int i = 0; i < 7; i++) {
+            assertEquals(expected[i], result[i]);
+            logger.info("Expected string was found: " + result[i]);
+        }
+
+    }
+
     @AfterEach
     void eachTestTearDown() {
         logger.info("Test ended");

@@ -124,7 +124,7 @@ public class ReaderWriter {
         return sentences;
     }
 
-    private String[] splitIntoWords(String inputSentence) {
+    public String[] splitIntoWords(String inputSentence) {
         String[] words;
         if (isEmpty(inputSentence, "предложение")) {
             words = new String[0];
