@@ -2,55 +2,44 @@ package ru.innopolis.stc12.lab.wordFinder;
 
 import org.apache.log4j.Logger;
 
-public class SingleResourceParser extends Thread {
-    final static Logger logger = Logger.getLogger(SingleResourceParser.class);
-    String name;
-    String fileSource;
-    boolean isBigFile;
-    String fileResult;
-    String[] words;
-    ReaderWriter readerWriter;
-    Counter counter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-    public SingleResourceParser(String name, String fileSource, boolean isBigFile, String fileResult, String[] words, ReaderWriter readerWriter, Counter counter) {
-        this.name = name;
-        this.fileSource = fileSource;
-        this.isBigFile = isBigFile;
-        this.fileResult = fileResult;
-        this.words = words;
-        this.readerWriter = readerWriter;
-        this.counter = counter;
+public class SingleResourceParser {
+    private Pattern pattern;
+    private Logger logger = Logger.getLogger(SingleResourceParser.class);
+
+    SingleResourceParser() {
+        this.pattern = Pattern.compile("[.!?]");
     }
 
-    @Override
-    public void run() {
-        while (counter.getCount() > 7) {
-            synchronized (counter) {
-                try {
-                    counter.wait();
-                } catch (InterruptedException e) {
-                    logger.error(e);
+    public String getSentence(String str, String[] words) {
+        StringBuilder sentenceList = new StringBuilder();
+        StringBuilder buffer = new StringBuilder();
+        try (BufferedReader bf = new BufferedReader(new FileReader(str))) {
+            while (bf.ready()) {
+                int ch = bf.read();
+                buffer.append((char) ch);
+                if (isSentenceEnd((char) ch)) {
+                    for (String word : words) {
+                        if ((word != null) && (buffer.toString().contains(word))) {
+                            sentenceList.append(buffer.toString().trim()).append("\n");
+                        }
+                    }
+                    buffer.delete(0, buffer.length());
                 }
             }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
-        counter.incCount();
-        logger.info(name + " создан новый поток");
-        String[] result;
-        if (!isBigFile) {
-            String fromFile = readerWriter.readFrom(fileSource);
-            String[] temp = readerWriter.writeToSentences(fromFile);
-            result = readerWriter.wordSearch(temp, words);
-        } else {
-            logger.info("Внимание! Идет обработка файла большого размера. Это может занять несколько (от 3 до 7) минут");
-            result = readerWriter.readFromBigFile(fileSource, words);
-        }
-        readerWriter.writeToResult(result, fileResult);
-        logger.info(name + " поток завершен");
-        counter.decCount();
-        synchronized (counter) {
-            counter.notifyAll();
-        }
+        return sentenceList.toString();
+    }
 
+    private boolean isSentenceEnd(char ch) {
+        Matcher m = pattern.matcher(String.valueOf(ch));
+        return m.find();
     }
 }
-
