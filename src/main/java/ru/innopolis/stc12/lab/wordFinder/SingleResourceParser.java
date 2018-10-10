@@ -3,43 +3,65 @@ package ru.innopolis.stc12.lab.wordFinder;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.BlockingQueue;
 
-public class SingleResourceParser {
-    private Pattern pattern;
-    private Logger logger = Logger.getLogger(SingleResourceParser.class);
+public class SingleResourceParser implements Runnable {
+    private static final Logger LOGGER = Logger.getLogger(SingleResourceParser.class);
+    private static String[] words;
+    private static BlockingQueue<String> queue;
+    private String path;
 
-    SingleResourceParser() {
-        this.pattern = Pattern.compile("[.!?]");
+    SingleResourceParser(String path, String[] wordsList, BlockingQueue<String> queueInstance) {
+        this.path = path;
+        words = wordsList;
+        queue = queueInstance;
     }
 
-    public String getSentence(String str, String[] words) {
-        StringBuilder sentenceList = new StringBuilder();
-        StringBuilder buffer = new StringBuilder();
-        try (BufferedReader bf = new BufferedReader(new FileReader(str))) {
-            while (bf.ready()) {
-                int ch = bf.read();
-                buffer.append((char) ch);
-                if (isSentenceEnd((char) ch)) {
-                    for (String word : words) {
-                        if ((word != null) && (buffer.toString().contains(word))) {
-                            sentenceList.append(buffer.toString().trim()).append("\n");
-                        }
-                    }
-                    buffer.delete(0, buffer.length());
-                }
+    private static void compareWithWordsAndSave(String sentence) throws InterruptedException {
+        for (String w : words) {
+            if (sentence.toLowerCase().contains(w.toLowerCase())) {
+                queue.put(sentence);
+                break;
             }
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         }
-        return sentenceList.toString();
     }
 
-    private boolean isSentenceEnd(char ch) {
-        Matcher m = pattern.matcher(String.valueOf(ch));
-        return m.find();
+    @Override
+    public void run() {
+        URL url = this.getUrl();
+        if (url != null) {
+            try (InputStream inputStream = url.openStream();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));) {
+                StringBuilder buffer = new StringBuilder();
+                int data = 0;
+                while ((data = reader.read()) != -1) {
+                    char symbol = (char) data;
+                    if (symbol == '.' || symbol == '!' || symbol == '?') {
+                        compareWithWordsAndSave(buffer.toString());
+                        buffer = new StringBuilder();
+                    } else {
+                        buffer.append(symbol);
+                    }
+                }
+            } catch (IOException | InterruptedException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+    }
+
+    private URL getUrl() {
+        URL url = null;
+        try {
+            url = new URL(this.path);
+            LOGGER.info("URL created: " + url.toString());
+        } catch (MalformedURLException e) {
+            LOGGER.error(e.getMessage());
+        }
+        return url;
     }
 }

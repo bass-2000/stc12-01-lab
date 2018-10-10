@@ -3,40 +3,45 @@ package ru.innopolis.stc12.lab.wordFinder;
 
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.concurrent.*;
 
 
 public class DataParser implements DataParserInterface {
-    private List<Future<String>> future = new ArrayList<>();
-    final static Logger logger = Logger.getLogger(DataParser.class);
 
-    public DataParser(String[] sources, String[] words, String res) {
-        getOccurrences(sources, words, res);
+    private static final Logger logger = Logger.getLogger(DataParser.class);
+    private static final int MAX_T = 20;
+    private ExecutorService pool;
+
+
+    public DataParser() {
+        pool = Executors.newFixedThreadPool(MAX_T);
     }
 
     @Override
-    public void getOccurrences(String[] sources, String[] words, String res) {
-        logger.info("getOccurrences start");
+    public void getOccurrences(String[] sources, String[] words, String res) throws InterruptedException {
         long beginTime = System.currentTimeMillis();
-        SingleResourceParser singleResourceParser = new SingleResourceParser();
-        Writer writer = new Writer();
-        ExecutorService threadPool = Executors.newFixedThreadPool(23);
-        logger.info("getSentence start");
-        for (String str : sources) {
-            if (str != null) {
-                future.add(CompletableFuture.supplyAsync(() -> singleResourceParser.getSentence(str, words), threadPool));
+        BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+        Thread fileWriter = new Thread(() -> {
+            try (PrintWriter writer = new PrintWriter(new File(res));) {
+                while (true) {
+                    writer.println(queue.take());
+                }
+            } catch (IOException | InterruptedException e) {
+                logger.error(e.getMessage());
             }
+        });
+        fileWriter.start();
+        logger.info("Writer was started");
+        for (String source : sources) {
+            pool.execute(new SingleResourceParser(source, words, queue));
+            logger.info("Job executed for source: " + source);
         }
-        logger.info("getSentence end");
-        logger.info("writer start");
-        writer.write(future, res);
-        logger.info("shutdown start");
-        threadPool.shutdown();
+        pool.shutdown();
+        pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        fileWriter.interrupt();
         calculateTime(beginTime);
     }
 

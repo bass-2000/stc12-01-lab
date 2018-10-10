@@ -17,9 +17,14 @@ public class Main {
         scanner.nextLine();
 
         String resultFile = "result";
-        String[] sourcesArray = getFIleNames("D://temp//testSet//");
+        String[] sourcesArray = getFIleNames("C://TEMP//GENMEGENTLY");
         String[] words = {"starter", "smarter"};
-        new DataParser(sourcesArray, words, resultFile);
+        DataParserInterface dataParser = new DataParser();
+        try {
+            dataParser.getOccurrences(sourcesArray, words, resultFile);
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+        }
 
     }
     public static String[] getFIleNames(String path) {
