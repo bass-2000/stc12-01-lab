@@ -17,7 +17,7 @@ public class Main {
         scanner.nextLine();
 
         String resultFile = "result";
-        String[] sourcesArray = getFIleNames("C://TEMP//GENMEGENTLY");
+        String[] sourcesArray = getFIleNames("D://temp//testSet//");
         String[] words = {"starter", "smarter"};
         DataParserInterface dataParser = new DataParser();
         try {
@@ -34,8 +34,9 @@ public class Main {
 
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
-                results.add(path + listOfFiles[i].getName());
+                results.add("file:" + path + listOfFiles[i].getName());
             }
+
         }
         return results.toArray(new String[0]);
     }
